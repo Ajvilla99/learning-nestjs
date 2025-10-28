@@ -15,11 +15,19 @@ export class BrandsService {
   ];
 
   create(createBrandDto: CreateBrandDto) {
-    return 'This action adds a new brand';
+
+    const { name } = createBrandDto
+
+    const brand: Brand = {
+      id: uuid(),
+      name: name.toLocaleLowerCase(),
+      createdAt: new Date().getTime()
+    }
+    return brand;
   }
 
   findAll() {
-    return `This action returns all brands`;
+    return this.brands;
   }
 
   findOne(id: string) {
@@ -29,10 +37,28 @@ export class BrandsService {
   }
 
   update(id: string, updateBrandDto: UpdateBrandDto) {
-    return `This action updates a #${id} brand`;
+    
+    let brandDB = this.findOne(id);
+
+    this.brands = this.brands.map(brand => {
+      if ( brand.id === id ) {
+
+        brandDB.updatedAt = new Date().getTime();
+        brandDB = { ...brandDB, ...updateBrandDto }
+        return brandDB;
+      }
+      return brand;
+    })
+
+    return brandDB;
   }
 
   remove(id: string) {
-    return `This action removes a #${id} brand`;
+    this.brands = this.brands.filter( brand => brand.id !== id)
   }
+
+    fillBrandsWithSeedData( brands: Brand[] ) {
+      this.brands = brands;
+    }
+  
 }
